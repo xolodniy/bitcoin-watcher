@@ -12,15 +12,16 @@ const (
 )
 
 type Invoice struct {
-	Address   string
-	Amount    int64 // satoshis
-	Status    InvoiceStatus
-	CreatedAt time.Time
+	Address    string
+	ScriptHash string
+	Amount     int64 // satoshis
+	Status     InvoiceStatus
+	CreatedAt  time.Time
 
 	// ID        string
 	// ExpiresAt     time.Time
-	// TxID          string
-	// Confirmations int   // required
-	// CurrentHeight int
-	// ScriptHash     string
+	TxID                  string
+	TxHeight              int
+	RequiredConfirmations int
+	Confirmations         int // required
 }
