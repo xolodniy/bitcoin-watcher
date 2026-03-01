@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bitcoin-watcher/api"
 	"bitcoin-watcher/electrum_client"
 	"bitcoin-watcher/invoice_manager"
 	"crypto/sha256"
@@ -27,6 +28,8 @@ func main() {
 	_ = client.SubscribeHeaders()
 
 	manager := invoice_manager.NewInvoiceManager(client)
+	ctrl := api.New(manager)
+	_ = ctrl
 	manager.HandleScriptHash(scripthash)
 
 	_ = client.SubscribeScriptHash(scripthash)
