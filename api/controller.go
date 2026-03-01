@@ -1,10 +1,14 @@
 package api
 
 import (
+	"bitcoin-watcher/common"
+	"bitcoin-watcher/config"
 	"bitcoin-watcher/invoice_manager"
+	"errors"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type Controller struct {
@@ -35,4 +39,20 @@ func New(manager *invoice_manager.InvoiceManager) *Controller {
 	r.GET("/history/:hash", c.history)
 
 	return &c
+}
+
+func (c *Controller) Start() {
+	httpServer := &http.Server{
+		Addr:    ":" + strconv.Itoa(config.Main.HTTP.Port),
+		Handler: c.router,
+		// ReadTimeout:       300 * time.Second,
+		// ReadHeaderTimeout: 300 * time.Second,
+		// WriteTimeout:      300 * time.Second,
+		// IdleTimeout:       300 * time.Second,
+	}
+	go func() {
+		if err := httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			common.Logger().Errorw("Failed to start HTTP server", "err", err)
+		}
+	}()
 }

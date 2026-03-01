@@ -1,0 +1,18 @@
+telegram:
+  enabled: true
+  # идентификатор чата, где будут публиковаться сообщения
+  chat_id: -1003111111111
+  # токен бота, полученный у @BotFather
+  bot_token: "8293896205:AAGP111111111111111Pyp_111111111eXU"
+
+db:
+  host: "localhost"
+  port: "5435"
+  user: "usr"
+  password: "123"
+  name: "dbname"
+
+http:
+  port: 8095
+
+log_level: "info"

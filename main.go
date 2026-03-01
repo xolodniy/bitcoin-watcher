@@ -2,6 +2,7 @@ package main
 
 import (
 	"bitcoin-watcher/api"
+	"bitcoin-watcher/config"
 	"bitcoin-watcher/electrum_client"
 	"bitcoin-watcher/invoice_manager"
 	"crypto/sha256"
@@ -13,6 +14,8 @@ import (
 )
 
 func main() {
+	config.InitFrom("./config/config.yaml")
+
 	addr := "bc1qmzf99vrwrpvzpuuc6k5nx40tr39j95vfqsu004"
 	scripthash, err := AddressToElectrumScriptHash(addr, &chaincfg.MainNetParams)
 	if err != nil {
@@ -29,10 +32,12 @@ func main() {
 
 	manager := invoice_manager.NewInvoiceManager(client)
 	ctrl := api.New(manager)
-	_ = ctrl
+
 	manager.HandleScriptHash(scripthash)
 
 	_ = client.SubscribeScriptHash(scripthash)
+
+	ctrl.Start()
 
 	select {}
 }
