@@ -1,0 +1,41 @@
+services:
+  bitcoind:
+    image: ruimarinho/bitcoin-core:24-alpine
+    container_name: bitcoind
+    restart: unless-stopped
+    command:
+      -printtoconsole
+      -server=1
+      -txindex=0
+      -prune=550
+      -rpcuser=user
+      -rpcpassword=pass
+      -rpcallowip=0.0.0.0/0
+      -rpcbind=0.0.0.0
+      -zmqpubrawblock=tcp://0.0.0.0:28332
+      -zmqpubrawtx=tcp://0.0.0.0:28333
+    volumes:
+      - ./bitcoin-data:/home/bitcoin/.bitcoin
+    ports:
+#      - "8332:8332"
+      - "8333:8333"
+      - "28332:28332"
+      - "28333:28333"
+
+  electrs:
+    image: mempool/electrs:v3.4.0-dev1
+    container_name: electrs
+    restart: unless-stopped
+    depends_on:
+      - bitcoind
+    command:
+      - --network=bitcoin
+      - --daemon-rpc-addr=bitcoind:8332
+      - --daemon-dir=/data
+      - --electrum-rpc-addr=0.0.0.0:50001
+      - --db-dir=/electrs-db
+    volumes:
+      - ./bitcoin-data:/data
+      - ./electrs-db:/electrs-db
+    ports:
+      - "50001:50001"
